@@ -1,0 +1,340 @@
+:root {
+    --primary: #FF5722; /* Naranja brillante (barro, sol) */
+    --primary-dark: #E64A19;
+    --secondary: #4CAF50; /* Verde campo */
+    --secondary-dark: #388E3C;
+    --accent: #FFC107; /* Amarillo maíz, sol */
+    --accent-dark: #FFA000;
+    --bg-color: #FFF3E0; /* Beige cálido */
+    --text-color: #3E2723; /* Café oscuro */
+    --border-radius: 16px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Nunito', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-image: 
+        radial-gradient(circle at 10% 20%, #4CAF50 0%, transparent 10%),
+        radial-gradient(circle at 90% 80%, #FFC107 0%, transparent 10%),
+        radial-gradient(circle at 50% 50%, #FF5722 0%, transparent 5%);
+    background-size: 100px 100px;
+    background-position: 0 0, 50px 50px;
+}
+
+h1, h2 {
+    font-family: 'Fredoka One', cursive;
+    text-align: center;
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    max-width: 800px;
+    height: 100vh;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    flex-direction: column;
+    position: relative;
+    max-height: 90vh;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* Animations */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px) rotate(-5deg); }
+    75% { transform: translateX(5px) rotate(5deg); }
+}
+
+.title-bounce {
+    font-size: 3rem;
+    color: var(--primary);
+    text-shadow: 2px 2px 0px var(--accent);
+    margin-bottom: 10px;
+    animation: bounce 2s infinite ease-in-out;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: var(--primary-dark);
+}
+
+.menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+/* Buttons */
+.btn {
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-family: 'Fredoka One', cursive;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 6px 0px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
+    display: inline-block;
+}
+
+.btn:active {
+    transform: translateY(6px);
+    box-shadow: 0 0px 0px rgba(0,0,0,0.15);
+}
+
+.btn.primary { background-color: var(--primary); color: white; box-shadow: 0 6px 0px var(--primary-dark); }
+.btn.secondary { background-color: var(--secondary); color: white; box-shadow: 0 6px 0px var(--secondary-dark); }
+.btn.accent { background-color: var(--accent); color: white; box-shadow: 0 6px 0px var(--accent-dark); }
+.btn.success { background-color: #2196F3; color: white; box-shadow: 0 6px 0px #1976D2; }
+.btn.warning { background-color: #f44336; color: white; box-shadow: 0 6px 0px #d32f2f; }
+
+.btn small {
+    font-size: 1rem;
+    font-family: 'Nunito', sans-serif;
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1.2rem;
+    padding: 10px 15px;
+    background-color: #ccc;
+    color: #333;
+    box-shadow: 0 4px 0px #999;
+    width: auto;
+    max-width: none;
+}
+
+header {
+    margin-bottom: 20px;
+    text-align: center;
+    padding-top: 50px;
+}
+
+header h2 {
+    font-size: 2.2rem;
+    color: var(--primary-dark);
+}
+
+.instruction {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 15px 0;
+}
+
+/* Grado 1 */
+.items-area {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    min-height: 150px;
+    padding: 20px;
+    background: #e8f5e9;
+    border-radius: var(--border-radius);
+    border: 4px dashed var(--secondary);
+}
+
+.item-icon {
+    font-size: 4rem;
+    animation: popIn 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.item-icon:hover {
+    transform: scale(1.2);
+}
+
+.options-area {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.number-btn {
+    width: 80px;
+    height: 80px;
+    font-size: 2.5rem;
+    border-radius: 50%;
+    padding: 0;
+}
+
+/* Monedas (Grado 2 y 3) */
+.coin-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+}
+
+.coin-icon {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffd54f 20%, #ffca28 80%);
+    border: 8px solid #ffb300;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem;
+    font-family: 'Fredoka One', cursive;
+    color: #d84315;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.2), inset 0 0 15px rgba(255,255,255,0.8);
+    animation: bounce 2s infinite ease-in-out;
+    position: relative;
+}
+
+.coin-icon::before {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    border: 2px dashed #ffb300;
+}
+
+.coin {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffd54f 20%, #ffca28 80%);
+    border: 4px solid #ffb300;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    color: #d84315;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    transition: transform 0.1s;
+    font-weight: bold;
+}
+.coin:active {
+    transform: scale(0.9);
+}
+
+/* Tiendita (Grado 3) */
+.store-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.product-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffe0b2;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    position: relative;
+    border: 4px solid #ff9800;
+}
+
+.product-item {
+    font-size: 6rem;
+}
+
+.price-tag {
+    background-color: var(--primary);
+    color: white;
+    padding: 5px 20px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    border-radius: 10px;
+    position: absolute;
+    bottom: -20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.wallet-area {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.wallet-coins {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Celebration Overlay */
+.overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--border-radius);
+}
+.overlay.active {
+    display: flex;
+}
+
+.celebration-box {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    animation: popIn 0.5s;
+    box-shadow: 0 0 30px #FFC107;
+}
+
+.celebration-box h1 {
+    font-size: 4rem;
+    margin-bottom: 10px;
+}
+.celebration-box p {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
