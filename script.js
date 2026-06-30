@@ -3,45 +3,96 @@ const screens = document.querySelectorAll('.screen');
 const gradeBtns = document.querySelectorAll('.grade-btn');
 const backBtns = document.querySelectorAll('.back-btn');
 const celebrationScreen = document.getElementById('celebration-screen');
+const celebrationText = document.getElementById('celebration-text');
 const nextBtn = document.getElementById('next-btn');
+const ttsToggleBtn = document.getElementById('tts-toggle');
+const mascot = document.querySelector('.mascot-img');
+const mascotSpeech = document.getElementById('mascot-speech');
 
 // Variables globales de juego
 let currentGrade = null;
 let currentAnswer = null;
 let currentAmount = 0;
+let ttsEnabled = true;
 
-// Lista de objetos rurales
-const farmItems = ['🌽', '🍅', '🍎', '🥚', '🥕', '🍊', '🌶️'];
+// Lista de objetos del Mundial (Reemplaza a los objetos rurales)
+const farmItems = ['⚽', '🥅', '🎫', '🏟️', '👟', '🏆', '🟨'];
+const itemNames = {
+    '⚽': 'Balones', '🥅': 'Porterías', '🎫': 'Boletos', 
+    '🏟️': 'Estadios', '👟': 'Tenis', '🏆': 'Copas', '🟨': 'Tarjetas'
+};
+
 // Valores de monedas
 const coinValues = [1, 2, 5, 10];
-// Store items (Grade 3) con sus precios relativos aproximados
+
+// Store items (Grade 3) Comida de estadio
 const storeItems = [
-    {emoji: '🥚', price: 3},
-    {emoji: '🍅', price: 4},
-    {emoji: '🌽', price: 5},
-    {emoji: '🥕', price: 6},
-    {emoji: '🍎', price: 8},
-    {emoji: '🍊', price: 10},
-    {emoji: '🥛', price: 15},
-    {emoji: '🍞', price: 20}
+    {emoji: '🥤', price: 10, name: 'Refresco'},
+    {emoji: '🍿', price: 15, name: 'Palomitas'},
+    {emoji: '🌭', price: 20, name: 'Hot Dog'},
+    {emoji: '🍕', price: 25, name: 'Pizza'},
+    {emoji: '🧢', price: 30, name: 'Gorra'},
+    {emoji: '👕', price: 50, name: 'Camiseta'},
+    {emoji: '🧣', price: 40, name: 'Bufanda'}
 ];
 
 // Synth de voz
 const synth = window.speechSynthesis;
 
 function speak(text) {
+    if (!ttsEnabled) return;
     if (synth.speaking) synth.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'es-MX';
     utterance.rate = 0.9;
-    utterance.pitch = 1.2;
+    utterance.pitch = 1.1;
     synth.speak(utterance);
 }
 
+// Toggle TTS
+ttsToggleBtn.addEventListener('click', () => {
+    ttsEnabled = !ttsEnabled;
+    ttsToggleBtn.setAttribute('aria-pressed', ttsEnabled);
+    ttsToggleBtn.textContent = `🔊 Lector de Voz: ${ttsEnabled ? 'ON' : 'OFF'}`;
+    if (ttsEnabled) {
+        speak('Lector de voz activado');
+    } else {
+        if (synth.speaking) synth.cancel();
+    }
+});
+
 // Navegación
 function showScreen(screenId) {
-    screens.forEach(s => s.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
+    screens.forEach(s => {
+        s.classList.remove('active');
+        s.setAttribute('aria-hidden', 'true');
+    });
+    const target = document.getElementById(screenId);
+    target.classList.add('active');
+    target.setAttribute('aria-hidden', 'false');
+    
+    // Anunciar el cambio de pantalla si TTS está activo
+    if (screenId === 'main-menu') {
+        speak('Menú principal del Mundial');
+        mascotSay('¡A Jugar!');
+    } else if (screenId === 'game-grade-1') {
+        speak('A contar balones. Toca los objetos para contarlos.');
+        mascotSay('¡Cuenta bien!');
+    } else if (screenId === 'game-grade-2') {
+        speak('Dinero para el boleto. ¿Qué valor tiene esta moneda?');
+        mascotSay('¡Conoce el dinero!');
+    } else if (screenId === 'game-grade-3') {
+        speak('Comida del Estadio. Selecciona monedas para pagar el producto.');
+        mascotSay('¡A comprar!');
+    }
+}
+
+function mascotSay(text, duration = 3000) {
+    mascotSpeech.textContent = text;
+    mascotSpeech.classList.add('show');
+    setTimeout(() => {
+        mascotSpeech.classList.remove('show');
+    }, duration);
 }
 
 gradeBtns.forEach(btn => {
@@ -60,6 +111,7 @@ backBtns.forEach(btn => {
 
 nextBtn.addEventListener('click', () => {
     celebrationScreen.classList.remove('active');
+    celebrationScreen.setAttribute('aria-hidden', 'true');
     loadLevel(currentGrade);
 });
 
@@ -78,171 +130,155 @@ function loadLevel(grade) {
 
 function showCelebration() {
     celebrationScreen.classList.add('active');
-    const celebrations = ["¡Muy bien!", "¡Excelente!", "¡Eres muy inteligente!", "¡Buen trabajo!"];
+    celebrationScreen.setAttribute('aria-hidden', 'false');
+    const celebrations = ["¡Golazo!", "¡Eres un Campeón!", "¡Tiro Libre Perfecto!", "¡Medalla de Oro!"];
     const text = celebrations[Math.floor(Math.random() * celebrations.length)];
-    speak(text);
+    celebrationText.textContent = text;
+    speak(text + " ¡Lo hiciste excelente!");
+    
+    // Animar mascota
+    mascot.classList.remove('sad');
+    mascot.classList.add('cheer');
+    mascotSay('¡Siiiii!');
+    setTimeout(() => mascot.classList.remove('cheer'), 600);
 }
 
-function playError() {
-    speak("Intenta de nuevo, tú puedes.");
+function playErrorSound() {
+    speak('Intenta otra vez.');
+    // Animar mascota triste
+    mascot.classList.remove('cheer');
+    mascot.classList.add('sad');
+    mascotSay('¡Casi!');
+    setTimeout(() => mascot.classList.remove('sad'), 500);
 }
 
-// Lógica Grado 1 (Contar)
+// GRADO 1: A Contar Balones
 function generateGrade1() {
     const container = document.getElementById('g1-items-container');
     const optionsContainer = document.getElementById('g1-options-container');
     container.innerHTML = '';
     optionsContainer.innerHTML = '';
-
-    const itemCount = Math.floor(Math.random() * 9) + 1; // 1 a 9 items
-    currentAnswer = itemCount;
-    const emoji = farmItems[Math.floor(Math.random() * farmItems.length)];
-
-    speak(`¿Cuántos hay?`);
-
-    for (let i = 0; i < itemCount; i++) {
-        const el = document.createElement('div');
-        el.className = 'item-icon';
-        el.textContent = emoji;
-        el.addEventListener('click', () => {
-            speak(`Uno`); // Simula contar, podríamos refinarlo para que cuente 1,2,3
+    
+    const count = Math.floor(Math.random() * 10) + 1; // 1 a 10
+    currentAnswer = count;
+    const item = farmItems[Math.floor(Math.random() * farmItems.length)];
+    const itemName = itemNames[item];
+    
+    // Accesibilidad visual/auditiva: decir qué contar
+    container.setAttribute('aria-label', `Hay ${count} ${itemName} en pantalla.`);
+    
+    for (let i = 0; i < count; i++) {
+        const div = document.createElement('div');
+        div.className = 'item-emoji';
+        div.textContent = item;
+        div.setAttribute('role', 'button');
+        div.setAttribute('tabindex', '0');
+        div.setAttribute('aria-label', `Objeto número ${i+1}`);
+        div.addEventListener('click', () => speak(`Contaste uno, llevas ${i+1}`));
+        div.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                speak(`Contaste uno, llevas ${i+1}`);
+            }
         });
-        container.appendChild(el);
+        container.appendChild(div);
     }
-
-    // Generar opciones (1 correcta, 2 incorrectas)
-    let options = [itemCount];
-    while(options.length < 3) {
-        let wrong = Math.floor(Math.random() * 9) + 1;
-        if (!options.includes(wrong) && wrong !== itemCount) {
-            options.push(wrong);
-        }
+    
+    // Generar opciones
+    let options = new Set([count]);
+    while(options.size < 3) {
+        options.add(Math.floor(Math.random() * 10) + 1);
     }
-    // Mezclar opciones
-    options.sort(() => Math.random() - 0.5);
-
+    options = Array.from(options).sort(() => Math.random() - 0.5);
+    
     options.forEach(opt => {
         const btn = document.createElement('button');
-        btn.className = 'btn primary number-btn';
+        btn.className = 'option-btn';
         btn.textContent = opt;
-        btn.addEventListener('click', () => {
-            speak(`${opt}`);
-            if(opt === currentAnswer) {
-                setTimeout(showCelebration, 1000);
-            } else {
-                btn.style.animation = 'shake 0.5s';
-                setTimeout(() => btn.style.animation = '', 500);
-                playError();
-            }
-        });
+        btn.setAttribute('aria-label', `Opción ${opt}`);
+        btn.addEventListener('click', () => checkAnswer(opt, count));
         optionsContainer.appendChild(btn);
     });
 }
 
-// Lógica Grado 2 (Monedas)
+// GRADO 2: Las Monedas
 function generateGrade2() {
-    const coinDisplay = document.getElementById('g2-coin-display');
+    const display = document.getElementById('g2-coin-display');
     const optionsContainer = document.getElementById('g2-options-container');
-    coinDisplay.innerHTML = '';
     optionsContainer.innerHTML = '';
-
-    const coinVal = coinValues[Math.floor(Math.random() * coinValues.length)];
-    currentAnswer = coinVal;
-
-    speak("¿De a cómo es esta moneda?");
-
-    const coin = document.createElement('div');
-    coin.className = 'coin-icon';
-    coin.textContent = `$${coinVal}`;
-    coinDisplay.appendChild(coin);
-
-    let options = [coinVal];
-    while(options.length < 3) {
-        let wrong = coinValues[Math.floor(Math.random() * coinValues.length)];
-        if (!options.includes(wrong)) {
-            options.push(wrong);
-        }
+    
+    const coin = coinValues[Math.floor(Math.random() * coinValues.length)];
+    currentAnswer = coin;
+    
+    display.textContent = `$${coin}`;
+    display.setAttribute('aria-label', `Moneda de ${coin} pesos`);
+    
+    let options = new Set([coin]);
+    while(options.size < 3) {
+        options.add(coinValues[Math.floor(Math.random() * coinValues.length)]);
     }
-    options.sort(() => Math.random() - 0.5);
-
+    options = Array.from(options).sort(() => Math.random() - 0.5);
+    
     options.forEach(opt => {
         const btn = document.createElement('button');
-        btn.className = 'btn accent number-btn';
+        btn.className = 'option-btn';
         btn.textContent = `$${opt}`;
-        btn.addEventListener('click', () => {
-            speak(`${opt} pesos`);
-            if(opt === currentAnswer) {
-                setTimeout(showCelebration, 1000);
-            } else {
-                btn.style.animation = 'shake 0.5s';
-                setTimeout(() => btn.style.animation = '', 500);
-                playError();
-            }
-        });
+        btn.setAttribute('aria-label', `Valor ${opt} pesos`);
+        btn.addEventListener('click', () => checkAnswer(opt, coin));
         optionsContainer.appendChild(btn);
     });
 }
 
-// Lógica Grado 3 (La Tiendita)
+// GRADO 3: La Tienda (Estadio)
 function generateGrade3() {
-    const productEl = document.getElementById('g3-product');
-    const priceEl = document.getElementById('g3-price');
-    const walletCoins = document.querySelectorAll('.btn-coin');
-    const clearBtn = document.getElementById('g3-clear');
-    const buyBtn = document.getElementById('g3-buy');
-    const amountSpan = document.getElementById('g3-current-amount');
-
-    // Desvincular eventos viejos (clonando)
-    clearBtn.replaceWith(clearBtn.cloneNode(true));
-    buyBtn.replaceWith(buyBtn.cloneNode(true));
-
-    const item = storeItems[Math.floor(Math.random() * storeItems.length)];
-    currentAnswer = item.price;
+    const productDisplay = document.getElementById('g3-product');
+    const priceDisplay = document.getElementById('g3-price');
+    const currentAmountDisplay = document.getElementById('g3-current-amount');
+    
+    const product = storeItems[Math.floor(Math.random() * storeItems.length)];
+    currentAnswer = product.price;
     currentAmount = 0;
-
-    productEl.textContent = item.emoji;
-    priceEl.textContent = `$${item.price}`;
-    amountSpan.textContent = currentAmount;
-
-    speak(`Cuesta ${item.price} pesos.`);
-
-    // Agregar eventos a las monedas
-    // Removemos viejos eventos primero para no duplicar sumas
-    const walletContainer = document.getElementById('g3-wallet');
-    walletContainer.innerHTML = '';
-    coinValues.forEach(val => {
-        const btn = document.createElement('button');
-        btn.className = 'coin btn-coin';
-        btn.dataset.val = val;
-        btn.textContent = `$${val}`;
-        btn.addEventListener('click', () => {
-            speak(`${val}`);
-            currentAmount += val;
-            document.getElementById('g3-current-amount').textContent = currentAmount;
-        });
-        walletContainer.appendChild(btn);
-    });
-
-    document.getElementById('g3-clear').addEventListener('click', () => {
-        currentAmount = 0;
-        document.getElementById('g3-current-amount').textContent = currentAmount;
-        speak("Limpiando");
-    });
-
-    document.getElementById('g3-buy').addEventListener('click', () => {
-        if(currentAmount >= currentAnswer) { // Allowing overpay for change logic or exactly
-            let overpay = currentAmount - currentAnswer;
-            if (overpay === 0) {
-                 speak(`¡Exacto! Pagaste ${currentAmount} pesos.`);
-            } else {
-                 speak(`Pagaste ${currentAmount}. Tu cambio es de ${overpay} pesos.`);
-            }
-            setTimeout(showCelebration, 2500);
-        } else {
-            let lack = currentAnswer - currentAmount;
-            document.getElementById('game-grade-3').style.animation = 'shake 0.5s';
-            setTimeout(() => document.getElementById('game-grade-3').style.animation = '', 500);
-            speak(`Faltan ${lack} pesos.`);
-        }
-    });
+    
+    productDisplay.textContent = product.emoji;
+    productDisplay.setAttribute('aria-label', `Producto: ${product.name}`);
+    priceDisplay.textContent = `$${product.price}`;
+    currentAmountDisplay.textContent = '0';
+    
+    if(ttsEnabled) speak(`Comprar ${product.name}. Cuesta ${product.price} pesos.`);
 }
+
+function checkAnswer(selected, correct) {
+    if (selected === correct) {
+        showCelebration();
+    } else {
+        playErrorSound();
+        const el = event.target;
+        el.style.animation = 'shake 0.5s';
+        setTimeout(() => el.style.animation = '', 500);
+    }
+}
+
+// Eventos Grado 3
+document.querySelectorAll('.btn-coin').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const val = parseInt(e.currentTarget.dataset.val);
+        currentAmount += val;
+        document.getElementById('g3-current-amount').textContent = currentAmount;
+        speak(`Agregaste ${val} pesos. Llevas ${currentAmount}`);
+    });
+});
+
+document.getElementById('g3-clear').addEventListener('click', () => {
+    currentAmount = 0;
+    document.getElementById('g3-current-amount').textContent = currentAmount;
+    speak('Limpiaste las monedas.');
+});
+
+document.getElementById('g3-buy').addEventListener('click', () => {
+    if (currentAmount === currentAnswer) {
+        showCelebration();
+    } else {
+        playErrorSound();
+        speak(`Tienes ${currentAmount} pesos, pero cuesta ${currentAnswer} pesos.`);
+    }
+});

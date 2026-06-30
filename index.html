@@ -3,81 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Tiendita Rural</title>
+    <title>El Kiosco del Mundial</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Mascota Animada -->
+    <div id="mascot" aria-hidden="true">
+        <div class="speech-bubble" id="mascot-speech">¡A Jugar!</div>
+        <img src="mascot.png" alt="Mascota Pelota" class="mascot-img">
+    </div>
+    <!-- Toggle Accessibility TTS -->
+    <button id="tts-toggle" class="btn tts-btn" aria-label="Activar narrador" aria-pressed="true">🔊 Lector de Voz: ON</button>
+
     <!-- Menú Principal -->
-    <div id="main-menu" class="screen active">
-        <h1 class="title-bounce">La Tiendita Rural 🌽🏡</h1>
-        <p class="subtitle">¡Aprende los números y monedas de nuestro pueblo!</p>
-        <div class="menu-options">
-            <button class="btn primary grade-btn" data-start="1">1° Grado<br><small>A Contar el Campo</small></button>
-            <button class="btn secondary grade-btn" data-start="2">2° Grado<br><small>Conoce tus Monedas</small></button>
-            <button class="btn accent grade-btn" data-start="3">3° Grado<br><small>Comprar en la Tienda</small></button>
+    <div id="main-menu" class="screen active" role="main">
+        <h1 class="title-bounce">El Kiosco del Mundial ⚽🏆</h1>
+        <p class="subtitle">¡Aprende los números y monedas para el partido!</p>
+        <div class="menu-options" role="navigation" aria-label="Menú de Grados">
+            <button class="btn primary grade-btn" data-start="1" aria-label="Jugar 1° Grado: A Contar Balones">1° Grado<br><small>A Contar Balones</small></button>
+            <button class="btn secondary grade-btn" data-start="2" aria-label="Jugar 2° Grado: Dinero para el Boleto">2° Grado<br><small>Dinero para el Boleto</small></button>
+            <button class="btn accent grade-btn" data-start="3" aria-label="Jugar 3° Grado: Comprar en el Estadio">3° Grado<br><small>Comprar en el Estadio</small></button>
         </div>
     </div>
 
     <!-- Pantalla de Grado 1 -->
-    <div id="game-grade-1" class="screen">
+    <div id="game-grade-1" class="screen" role="region" aria-label="Juego de Contar Balones" aria-hidden="true">
         <header>
-            <button class="btn back-btn">⬅ Volver</button>
-            <h2>Contando en el Campo 🥚🍅</h2>
+            <button class="btn back-btn" aria-label="Volver al menú principal">⬅ Volver</button>
+            <h2>Contando Balones ⚽🥅</h2>
         </header>
         <div class="game-area">
-            <div id="g1-items-container" class="items-area"></div>
+            <div id="g1-items-container" class="items-area" aria-live="polite"></div>
             <p class="instruction">¿Cuántos objetos hay? ¡Toca para contar!</p>
-            <div id="g1-options-container" class="options-area"></div>
+            <div id="g1-options-container" class="options-area" role="group" aria-label="Opciones de respuesta"></div>
         </div>
     </div>
 
     <!-- Pantalla de Grado 2 -->
-    <div id="game-grade-2" class="screen">
+    <div id="game-grade-2" class="screen" role="region" aria-label="Juego de Monedas" aria-hidden="true">
         <header>
-            <button class="btn back-btn">⬅ Volver</button>
-            <h2>Las Monedas 🪙</h2>
+            <button class="btn back-btn" aria-label="Volver al menú principal">⬅ Volver</button>
+            <h2>Las Monedas del Mundial 🪙</h2>
         </header>
         <div class="game-area">
-            <div id="g2-coin-display" class="coin-display"></div>
+            <div id="g2-coin-display" class="coin-display" aria-live="polite"></div>
             <p class="instruction">¿Qué valor tiene esta moneda?</p>
-            <div id="g2-options-container" class="options-area"></div>
+            <div id="g2-options-container" class="options-area" role="group" aria-label="Opciones de respuesta"></div>
         </div>
     </div>
 
     <!-- Pantalla de Grado 3 -->
-    <div id="game-grade-3" class="screen">
+    <div id="game-grade-3" class="screen" role="region" aria-label="Juego de la Tienda" aria-hidden="true">
         <header>
-            <button class="btn back-btn">⬅ Volver</button>
-            <h2>La Tiendita 🛒</h2>
+            <button class="btn back-btn" aria-label="Volver al menú principal">⬅ Volver</button>
+            <h2>Comida del Estadio 🌭🥤</h2>
         </header>
         <div class="game-area store-layout">
             <div class="product-area">
-                <div id="g3-product" class="product-item"></div>
-                <div class="price-tag" id="g3-price"></div>
+                <div id="g3-product" class="product-item" aria-live="polite"></div>
+                <div class="price-tag" id="g3-price" aria-live="polite"></div>
             </div>
             <div class="wallet-area">
-                <p class="instruction">Selecciona monedas para pagar. Llevas: $<span id="g3-current-amount">0</span></p>
-                <div id="g3-wallet" class="wallet-coins">
-                    <button class="coin btn-coin" data-val="1">$1</button>
-                    <button class="coin btn-coin" data-val="2">$2</button>
-                    <button class="coin btn-coin" data-val="5">$5</button>
-                    <button class="coin btn-coin" data-val="10">$10</button>
+                <p class="instruction" aria-live="polite">Selecciona monedas para pagar. Llevas: $<span id="g3-current-amount">0</span></p>
+                <div id="g3-wallet" class="wallet-coins" role="group" aria-label="Billetera de Monedas">
+                    <button class="coin btn-coin" data-val="1" aria-label="Agregar 1 peso">$1</button>
+                    <button class="coin btn-coin" data-val="2" aria-label="Agregar 2 pesos">$2</button>
+                    <button class="coin btn-coin" data-val="5" aria-label="Agregar 5 pesos">$5</button>
+                    <button class="coin btn-coin" data-val="10" aria-label="Agregar 10 pesos">$10</button>
                 </div>
                 <div class="action-buttons">
-                    <button id="g3-clear" class="btn warning">Limpiar</button>
-                    <button id="g3-buy" class="btn success">¡Comprar!</button>
+                    <button id="g3-clear" class="btn warning" aria-label="Limpiar monedas seleccionadas">Limpiar</button>
+                    <button id="g3-buy" class="btn success" aria-label="Comprar producto">¡Comprar!</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Pantalla de Celebración -->
-    <div id="celebration-screen" class="screen overlay">
+    <div id="celebration-screen" class="screen overlay" role="dialog" aria-label="Pantalla de celebración" aria-hidden="true">
         <div class="celebration-box">
-            <h1 class="bounce-in">¡Muy Bien! 🌟</h1>
+            <h1 class="bounce-in" id="celebration-text" aria-live="assertive">¡Golazo! 🌟</h1>
             <p>¡Lo hiciste excelente!</p>
-            <button id="next-btn" class="btn primary bounce">Siguiente</button>
+            <button id="next-btn" class="btn primary bounce" aria-label="Siguiente nivel">Siguiente</button>
         </div>
     </div>
 
